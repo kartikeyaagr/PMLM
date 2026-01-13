@@ -16,4 +16,6 @@ dependencies = [
     "datasets>=4.4.2",
     "scikit-learn>=1.8.0",
     "matplotlib>=3.10.8",
+    "optimum[onnxruntime]>=2.1.0",
+    "streamlit>=1.52.2",
 ]

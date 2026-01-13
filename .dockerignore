@@ -1,0 +1,24 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Python
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Data & Training (Not needed for app inference)
+data/
+data_generation/
+finetuning/
+convertor_utils/
+ood_test.py
+fix_domain_gap.py
+main.py
+finetuning.ipynb
+
+# Artifacts
+.gemini/
