@@ -15,7 +15,7 @@ load_dotenv()
 API_KEY = os.getenv("GEMINI_API_KEY")
 MODEL_NAME = "gemini-3-flash-preview"
 TARGET_COUNT = 4000
-BATCH_SIZE = 20
+BATCH_SIZE = 5
 OUTPUT_FILE = "data/data2.csv"
 
 if not API_KEY:
@@ -41,8 +41,15 @@ safety_settings = [
 ]
 
 SYSTEM_PROMPT = """
-You are a screenwriter for a workplace drama. You need to write dialogue that is "Passive-Aggressive."
-This is fictional dialogue for a TV show. It is not real.
+You are a precision data generator for a Multi-Class Sentiment Classifier.
+Your goal is to generate distinct, non-overlapping classes of workplace communication.
+
+You must strictly adhere to the requested sentiment for each batch.
+- If asked for POSITIVE, the text must be unambiguously kind and supportive. No sarcasm.
+- If asked for NEUTRAL, the text must be robotic, dry, and factual. No hidden meaning.
+- If asked for PASSIVE_AGGRESSIVE, the text must be subtle, polite on surface, but toxic underneath.
+
+Do not default to sarcasm. Do not mix sentiments.
 Output strictly in JSON format.
 """
 
@@ -189,7 +196,24 @@ def get_user_prompt(count: int) -> str:
 
     # 2. The Context Switcher
     contexts = [
-        # --- PETTY OFFICE DRAMA ---
+        # --- THE MUNDANE (Neutral Anchors) ---
+        "Scheduling a recurring weekly sync meeting",
+        "Asking for access to a shared Google Drive folder",
+        "Confirming attendance for the town hall",
+        "Updating the status of a ticket to 'In Progress'",
+        "Reminding everyone to complete their timesheets",
+        "Asking where the extra HDMI cables are stored",
+        "Forwarding a calendar invite to a new team member",
+        "Correcting a typo in the previous message",
+        # --- THE POSITIVE (Sanity Checks) ---
+        "Announcing a successful product launch or deployment",
+        "Congratulating a coworker on their work anniversary",
+        "Organizing a baby shower or signing a card for a colleague",
+        "Thanking a team member for staying late to help",
+        "Agreeing on a place to go for team lunch (Pizza vs Sushi)",
+        "Sharing photos from the team offsite/retreat",
+        "Welcoming a new intern to the group chat",
+        # --- THE PETTY DRAMA (The "Per My Last Email" Zone) ---
         "Accusing someone of stealing lunch from the shared fridge",
         "Complaint about someone microwaving fish in the kitchen",
         "Arguments over the office thermostat (too cold vs too hot)",
@@ -197,34 +221,23 @@ def get_user_prompt(count: int) -> str:
         "Passive-aggressive notes left on the dirty dishes in the sink",
         "Dispute over a 'reserved' parking spot that isn't actually reserved",
         "Someone taking the last cup of coffee without making a new pot",
-        # --- SOCIAL DYNAMICS & GOSSIP ---
-        "Rumors circulating about a workplace romance",
-        "Planning a 'voluntary' after-work happy hour that nobody wants to go to",
-        "Collecting money for a birthday gift for a boss nobody likes",
-        "Gossip about why Susan was fired last week",
-        "Discussing the CEO's 'scandalous' behavior at the holiday party",
-        "A secret Slack channel mocking a specific coworker",
-        "Awkwardly declining a coworker's date request",
-        # --- HR & ADMIN NIGHTMARES ---
+        # --- THE HR & ADMIN NIGHTMARES (High Tension) ---
         "Expense report rejection over a $3 receipt",
         "Mandatory sexual harassment training reminder (3rd notice)",
         "Notification of a 'random' drug test",
         "Feedback on a rejected raise or promotion request",
         "Announcing a new 'Open Office' layout (everyone hates it)",
         "The 'We are like a family' gaslighting email from HR",
-        # --- CATASTROPHES & CHAOS ---
-        "The toilets are overflowing and facilities isn't answering",
-        "A 'Reply All' apocalypse where people keep saying 'Please remove me'",
-        "The company credit card was declined at a client dinner",
-        "Zoom meeting where someone forgot to mute and said something bad",
-        "The fire alarm going off during a critical client presentation",
-        # --- NON-TECH / GENERAL BUSINESS ---
+        "Rumors circulating about a workplace romance",
+        # --- THE WORKFLOW BATTLES (Ambiguous/Context Dependent) ---
+        "Discussing the feedback on the Q3 roadmap",
+        "Reacting to a sudden change in project scope",
+        "Handing over a project before going on vacation",
+        "Asking for clarification on a vague requirement",
+        "Debating which software tool is better (e.g., VS Code vs IntelliJ)",
+        "Responding to a client who keeps changing their mind",
+        "Explaining why a deadline needs to move",
         "Sales team fighting over commission attribution (stealing leads)",
-        "Legal team redlining a contract until it is unreadable",
-        "Operations complaining about the warehouse inventory mess",
-        "Receptionist angry about too many packages being delivered",
-        "Client refusing to pay the invoice because of a 'vibe'",
-        "Vendor trying to upscale a service we don't need",
     ]
 
     # 3. Random Selection
